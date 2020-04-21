@@ -28,10 +28,6 @@ client.on('connected', onConnectedHandler)
 // Connect to Twitch:
 client.connect()
 
-client.on("raw_message", (messageCloned, message) => {
-    console.log(message.raw)
-})
-
 // Called every time a message comes in
 function onMessageHandler (channel, user, msg, self) {
     if (self) { return } // Ignore messages from the bot
