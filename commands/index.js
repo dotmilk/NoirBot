@@ -3,6 +3,11 @@ class Commands {
 
     static initClass(){
         this.commands = reqAll( __dirname + '/plugins')
+        for (let key of Object.keys(this.commands)) {
+            if (this.commands[key].init) {
+                this.commands[key].init()
+            }
+        }
     }
 
     static handle(opts) {

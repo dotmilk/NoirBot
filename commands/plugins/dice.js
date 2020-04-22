@@ -1,6 +1,7 @@
 const sides = 6
 const DICE_CMD = "!dice"
 const MULTI_DICE_CMD = "!roll"
+const myName = 'dice'
 const commands = [ DICE_CMD
                    ,MULTI_DICE_CMD]
 
@@ -18,19 +19,36 @@ function rollManyDice(n){
 
 // Function called when the "dice" command is issued
 function handleDie(opts) {
-    opts.client.say(opts.channel, `${opts.user.username} rolled a ${rollDice()}`)
-    console.log(`* Executed ${opts.cmd} command`)
+    if (CoolDowns.globalCan(myName,DICE_CMD)){
+        CoolDowns.startGlobal(myName,DICE_CMD)
+        opts.client.say(opts.channel, `${opts.user.username} rolled a ${rollDice()}`)
+        console.log(`* Executed ${opts.cmd} command`)
+    }
+
 }
 
 function handleMulti(opts) {
-    let numDice = parseInt(opts.cmdSplit[1])
+    let user = opts.user.username
+    if (CoolDowns.userCan(myName,MULTI_DICE_CMD,user)) {
+        CoolDowns.startUser(myName,MULTI_DICE_CMD,user)
 
-    if (numDice && (numDice <= 5)) {
-        opts.client.say(opts.channel, `${opts.user.username} rolled ${numDice} dice and got ${rollManyDice(numDice).join(' - ')}`)
-    } else {
-       opts.client.say(opts.channel, `wtf ${numDice} is nonsense...or too big`)
+        let numDice = parseInt(opts.cmdSplit[1])
+        let reply
+        if (numDice && (numDice <= 5)) {
+            reply = `${opts.user.username} rolled ${numDice} dice and got ${rollManyDice(numDice).join(' - ')}`
+            opts.client.say(opts.channel, reply)
+        } else {
+            opts.client.say(opts.channel, `wtf ${numDice} is nonsense...or too big`)
+        }
+        console.log(`* Executed ${opts.cmd} command`)
     }
-    console.log(`* Executed ${opts.cmd} command`)
+}
+
+
+function init(){
+    CoolDowns.register(myName)
+    CoolDowns.globalTimer(myName,10,DICE_CMD)
+    CoolDowns.userTimer(myName,5,MULTI_DICE_CMD)
 }
 
 function canHandle(cmd) {
@@ -50,7 +68,10 @@ function handle(opts) {
 }
 
 
+
+
 module.exports = {
     canHandle: canHandle,
-    handle: handle
+    handle: handle,
+    init: init
 }

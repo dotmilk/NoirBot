@@ -1,3 +1,5 @@
+global.Promise = require('bluebird')
+global.CoolDowns = require('./cooldown')
 const tmi = require('tmi.js')
 const DotEnv = require('dotenv')
 DotEnv.config({ path: '.env', silent: true})
