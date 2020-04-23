@@ -17,11 +17,23 @@ function rollManyDice(n){
     return dice
 }
 
-// Function called when the "dice" command is issued
+function singleDiceMessage(opts) {
+    return `${opts.user.username} rolled a ${rollDice()}`
+}
+
+function multiSuccessMessage(opts,numDice) {
+    return
+}
+
+function multiFailureMessage(opts,numDice) {
+    return `wtf ${numDice} is nonsense...or too big`
+}
+
+// Handlers
 function handleDie(opts) {
     if (CoolDowns.globalCan(myName,DICE_CMD)){
         CoolDowns.startGlobal(myName,DICE_CMD)
-        opts.client.say(opts.channel, `${opts.user.username} rolled a ${rollDice()}`)
+        opts.client.say(opts.channel, singleDiceMessage(opts))
         console.log(`* Executed ${opts.cmd} command`)
     }
 
@@ -33,18 +45,16 @@ function handleMulti(opts) {
         CoolDowns.startUser(myName,MULTI_DICE_CMD,user)
 
         let numDice = parseInt(opts.cmdSplit[1])
-        let reply
         if (numDice && (numDice <= 5)) {
-            reply = `${opts.user.username} rolled ${numDice} dice and got ${rollManyDice(numDice).join(' - ')}`
-            opts.client.say(opts.channel, reply)
+            opts.client.say(opts.channel, multiSuccessMessage(opts,numDice))
         } else {
-            opts.client.say(opts.channel, `wtf ${numDice} is nonsense...or too big`)
+            opts.client.say(opts.channel, multiFailureMessage(opts,numDice))
         }
         console.log(`* Executed ${opts.cmd} command`)
     }
 }
 
-
+// API
 function init(){
     CoolDowns.register(myName)
     CoolDowns.globalTimer(myName,10,DICE_CMD)
@@ -67,11 +77,8 @@ function handle(opts) {
     }
 }
 
-
-
-
 module.exports = {
-    canHandle: canHandle,
-    handle: handle,
-    init: init
+    canHandle: canHandle
+    , handle: handle
+    , init: init
 }

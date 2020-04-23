@@ -20,12 +20,6 @@ class Commands {
                 return
             }
         }
-        // client.timeout(target,context.username,10,"don't touch")
-        //     .then((uh)=>{
-
-        //     }).catch((err) => {
-        //         console.log("the error...",err)
-        //     })
         console.log(`* Unknown command ${opts.cmd}`)
     }
 

@@ -5,9 +5,6 @@ const DotEnv = require('dotenv')
 DotEnv.config({ path: '.env', silent: true})
 DotEnv.config({ path: '.safe', silent: true})
 const Commands = require('./commands')
-// console.log(process.env.FOO)
-
-
 
 // Define configuration options
 const opts = {
