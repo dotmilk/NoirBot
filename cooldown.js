@@ -35,6 +35,7 @@ class CoolDown {
     }
 
     globalCan(pluginName,cmd) {
+
         return this.cooldowns.global[pluginName][cmd].state
     }
 

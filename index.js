@@ -4,7 +4,8 @@ const tmi = require('tmi.js')
 const DotEnv = require('dotenv')
 DotEnv.config({ path: '.env', silent: true})
 DotEnv.config({ path: '.safe', silent: true})
-const Commands = require('./commands')
+let Commands = new require('./commands')
+Commands = new Commands()
 
 // Define configuration options
 const opts = {
