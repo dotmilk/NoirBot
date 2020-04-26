@@ -10,7 +10,7 @@ global.UserInfo = require('./user')
 global.CoolDowns = require('./cooldown')
 console.log(UserInfo)
 let Commands = new require('./commands')
-Commands = new Commands()
+
 
 // Define configuration options
 const opts = {
@@ -36,7 +36,8 @@ client.on('connected', onConnectedHandler)
 
 // Connect to Twitch:
 mongoClient.connect().then(()=>{
-    console.log('* onnected to mongo')
+    console.log('* connected to mongo')
+    Commands = new Commands(mongoClient)
     return client.connect()
 }).catch((err)=>{
     console.error(err)
