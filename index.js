@@ -1,9 +1,14 @@
-global.Promise = require('bluebird')
-global.CoolDowns = require('./cooldown')
-const tmi = require('tmi.js')
 const DotEnv = require('dotenv')
 DotEnv.config({ path: '.env', silent: true})
 DotEnv.config({ path: '.safe', silent: true})
+global.Promise = require('bluebird')
+
+const MongoClient = require('mongodb').MongoClient
+const tmi = require('tmi.js')
+
+global.UserInfo = require('./user')
+global.CoolDowns = require('./cooldown')
+console.log(UserInfo)
 let Commands = new require('./commands')
 Commands = new Commands()
 
@@ -20,13 +25,23 @@ const opts = {
 
 // Create a client with our options
 const client = new tmi.client(opts)
+const mongoClient = new MongoClient(process.env.MONGO_URI, {
+    poolSize: 10,
+    useUnifiedTopology: true
+})
 
 // Register our event handlers (defined below)
 client.on('message', onMessageHandler)
 client.on('connected', onConnectedHandler)
 
 // Connect to Twitch:
-client.connect()
+mongoClient.connect().then(()=>{
+    console.log('* onnected to mongo')
+    return client.connect()
+}).catch((err)=>{
+    console.error(err)
+})
+
 
 // Called every time a message comes in
 function onMessageHandler (channel, user, msg, self) {

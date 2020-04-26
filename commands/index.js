@@ -6,6 +6,7 @@ class Commands {
     constructor(){
         this.commands = reqAll( __dirname + '/plugins')
         for (let key of Object.keys(this.commands)) {
+            // console.log(this.commands[key].pluginName)
             this.commands[key] = new this.commands[key]((n,h) => {
                 this.registerHandler(n,h)
             })
@@ -13,7 +14,7 @@ class Commands {
     }
 
     registerHandler(cmdName,handler) {
-        // detect if a plugin is overriding another plugin's cmd
+        // TODO detect if a plugin is overriding another plugin's cmd
         this.knownHandlers[cmdName] = handler
     }
 
