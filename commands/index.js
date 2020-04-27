@@ -13,6 +13,14 @@ class Commands {
         }
     }
 
+    async init(){
+        for (let key of Object.keys(this.commands)) {
+            if (this.commands[key].init) {
+                await this.commands[key].init()
+            }
+        }
+    }
+
     registerHandler(cmdName,handler) {
         // TODO detect if a plugin is overriding another plugin's cmd
         this.knownHandlers[cmdName] = handler
@@ -23,7 +31,9 @@ class Commands {
             cmdName = cmdSplit[0]
         opts.cmdSplit = cmdSplit
         if (this.knownHandlers[cmdName]){
-            this.knownHandlers[cmdName](opts)
+            this.knownHandlers[cmdName](opts).catch((err)=>{
+                console.log(err)
+            })
             return
         }
         console.log(`* Unknown command ${opts.cmd}`)

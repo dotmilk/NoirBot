@@ -5,12 +5,11 @@ global.Promise = require('bluebird')
 
 const MongoClient = require('mongodb').MongoClient
 const tmi = require('tmi.js')
-
+const Persistence = require('./persistence')
 global.UserInfo = require('./user')
 global.CoolDowns = require('./cooldown')
 console.log(UserInfo)
 let Commands = new require('./commands')
-
 
 // Define configuration options
 const opts = {
@@ -37,7 +36,11 @@ client.on('connected', onConnectedHandler)
 // Connect to Twitch:
 mongoClient.connect().then(()=>{
     console.log('* connected to mongo')
-    Commands = new Commands(mongoClient)
+    global.Persist = new Persistence(mongoClient.db(process.env.DB_NAME))
+    Commands = new Commands()
+    return Commands.init()
+
+}).then(()=>{
     return client.connect()
 }).catch((err)=>{
     console.error(err)

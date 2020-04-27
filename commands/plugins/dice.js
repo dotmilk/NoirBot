@@ -5,6 +5,7 @@ class DiceStuff {
         this.DICE_CMD = "!dice"
         this.MULTI_DICE_CMD = "!roll"
         this.ECHO = "!echo"
+        this.DICE_SEQ_NAME = "dice-rolls"
         this.pluginName = DiceStuff.pluginName
         // need to bind 'this'
         addHandler(this.DICE_CMD,this.handleSingleDice.bind(this))
@@ -15,13 +16,24 @@ class DiceStuff {
         CoolDowns.userTimer(this.pluginName,5,this.MULTI_DICE_CMD)
     }
 
-    handleSingleDice(opts) {
+    async init(){
+        await Persist.ensureCounter(this.DICE_SEQ_NAME,this.pluginName)
+        this.collection = Persist.getCollection(this.pluginName)
+        this.diceIncrementer = Persist.makeIncrementer(this.DICE_SEQ_NAME,this.pluginName)
+        this.diceCountValue = Persist.makeSeqValueGetter(this.DICE_SEQ_NAME,this.pluginName)
+    }
+
+    async handleSingleDice(opts) {
         if (CoolDowns.globalCan(this.pluginName,this.DICE_CMD)){
             CoolDowns.startGlobal(this.pluginName,this.DICE_CMD)
             opts.client.say(opts.channel, this.singleDiceMessage(opts))
+            let nextId = await this.diceIncrementer()
+            let currId = await this.diceCountValue()
+            console.log(nextId,"---",currId)
             console.log(`* Executed ${opts.cmd} command for ${JSON.stringify(opts.user)}`)
+            return this.collection.insertOne({ _id: nextId,type: 'dice-roll'})
         }
-
+        return false
     }
 
     handleBotSay(opts) {
