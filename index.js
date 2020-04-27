@@ -8,7 +8,6 @@ const tmi = require('tmi.js')
 const Persistence = require('./persistence')
 global.UserInfo = require('./user')
 global.CoolDowns = require('./cooldown')
-console.log(UserInfo)
 let Commands = new require('./commands')
 
 // Define configuration options
@@ -35,7 +34,7 @@ client.on('connected', onConnectedHandler)
 
 // Connect to Twitch:
 mongoClient.connect().then(()=>{
-    console.log('* connected to mongo')
+    console.info('* connected to mongo')
     global.Persist = new Persistence(mongoClient.db(process.env.DB_NAME))
     Commands = new Commands()
     return Commands.init()
@@ -59,7 +58,7 @@ function onMessageHandler (channel, user, msg, self) {
     if (msgPrefix == '!') {
         Commands.handle({cmd: cmd, channel: channel,user: user, client: client})
     } else {
-        console.log(`regular message: ${cmd}`)
+        console.info(`regular message: ${cmd}`)
     }
 
 
@@ -67,5 +66,5 @@ function onMessageHandler (channel, user, msg, self) {
 
 // Called every time the bot connects to Twitch chat
 function onConnectedHandler (addr, port) {
-    console.log(`* Connected to ${addr}:${port}`)
+    console.info(`* Connected to ${addr}:${port}`)
 }
